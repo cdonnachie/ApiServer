@@ -7,14 +7,14 @@ class General:
     @classmethod
     @cache.memoize(timeout=config.cache)
     def _calc_supply(cls, height):
-        snapshot = 443863973624633
+        #snapshot = 443863973624633
         supply = 0
 
         for height in range(0, height + 1):
             supply += utils.reward(height)
 
         return {
-            "supply": snapshot + supply,
+            "supply": supply,
             "mining": supply,
             "height": height
         }
@@ -24,29 +24,29 @@ class General:
         data = utils.make_request("getblockchaininfo")
 
         if data["error"] is None:
-            data["result"]["supply"] = cls._calc_supply(data["result"]["blocks"])["supply"]
-            data["result"]["reward"] = utils.reward(data["result"]["blocks"])
+            #data["result"]["supply"] = cls._calc_supply(data["result"]["blocks"])["supply"]
+            #data["result"]["reward"] = utils.reward(data["result"]["blocks"])
             data["result"].pop("verificationprogress")
-            data["result"].pop("initialblockdownload")
+            #data["result"].pop("initialblockdownload")
             data["result"].pop("pruned")
             data["result"].pop("softforks")
             data["result"].pop("bip9_softforks")
             data["result"].pop("warnings")
             data["result"].pop("size_on_disk")
 
-            nethash = utils.make_request("getnetworkhashps", [120, data["result"]["blocks"]])
-            if nethash["error"] is None:
-                data["result"]["nethash"] = int(nethash["result"])
+            # nethash = utils.make_request("getnetworkhashps", [120, data["result"]["blocks"]])
+            # if nethash["error"] is None:
+            #     data["result"]["nethash"] = int(nethash["result"])
 
         return data
 
-    @classmethod
-    @cache.memoize(timeout=config.cache)
-    def supply(cls):
-        data = utils.make_request("getblockchaininfo")
-        height = data["result"]["blocks"]
+    # @classmethod
+    # @cache.memoize(timeout=config.cache)
+    # def supply(cls):
+    #     data = utils.make_request("getblockchaininfo")
+    #     height = data["result"]["blocks"]
 
-        return cls._calc_supply(height)
+    #     return cls._calc_supply(height)
 
     @classmethod
     def fee(cls):
@@ -77,5 +77,5 @@ class General:
 
     @classmethod
     def price(cls):
-        link = "https://api.coingecko.com/api/v3/simple/price?ids=microbitcoin&vs_currencies=usd,btc,krw"
+        link = "https://www.exbitron.com/api/v2/peatio/public/markets/rvlusdt/tickers"
         return requests.get(link).json()

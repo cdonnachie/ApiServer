@@ -59,8 +59,8 @@ def block_by_hash(bhash):
 def block_header(bhash):
     data = utils.make_request("getblockheader", [bhash])
     if data["error"] is None:
-        data["result"]["txcount"] = data["result"]["nTx"]
-        data["result"].pop("nTx")
+        data["result"]["txcount"] = len(data["result"]["tx"])
+        #data["result"].pop("nTx")
 
     return jsonify(data)
 
@@ -126,23 +126,23 @@ def broadcast():
     raw = request.values.get("raw")
     return Transaction.broadcast(raw)
 
-@stats.rest
-@blueprint.route("/supply", methods=["GET"])
-def supply():
-    data = General.supply()
-    return jsonify(utils.response(data))
+# @stats.rest
+# @blueprint.route("/supply", methods=["GET"])
+# def supply():
+#     data = General.supply()
+#     return jsonify(utils.response(data))
 
-@stats.rest
-@blueprint.route("/supply/plain", methods=["GET"])
-def supply_plain():
-    data = int(utils.amount(General.supply()["supply"]))
-    return Response(str(data), mimetype="text/plain")
+# @stats.rest
+# @blueprint.route("/supply/plain", methods=["GET"])
+# def supply_plain():
+#     data = int(utils.amount(General.supply()["supply"]))
+#     return Response(str(data), mimetype="text/plain")
 
 @stats.rest
 @blueprint.route("/price", methods=["GET"])
 def price():
     data = General.price()
-    return jsonify(utils.response(data["microbitcoin"]))
+    return jsonify(utils.response(data["last"]))
 
 def init(app):
     app.register_blueprint(blueprint, url_prefix="/")

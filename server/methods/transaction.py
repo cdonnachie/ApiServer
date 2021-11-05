@@ -1,19 +1,22 @@
 from server import utils
 from server import cache
-import config
+import config,logging
 
 class Transaction:
     @classmethod
     def broadcast(cls, raw: str):
+        logging.info("Transaction.broadcast")
         return utils.make_request("sendrawtransaction", [raw])
 
     @classmethod
     @cache.memoize(timeout=config.cache)
     def decode(cls, raw: str):
+        logging.info("Transaction.decode")
         return utils.make_request("decoderawtransaction", [raw])
 
     @classmethod
     def info(cls, thash: str):
+        logging.info("Transaction.info")
         data = utils.make_request("getrawtransaction", [thash, True])
 
         if data["error"] is None:
@@ -43,6 +46,7 @@ class Transaction:
     @classmethod
     @cache.memoize(timeout=config.cache)
     def addresses(cls, tx_data):
+        logging.info("Transaction.addresses")
         updates = {}
         for tx in tx_data:
             transaction = Transaction.info(tx)
@@ -73,4 +77,5 @@ class Transaction:
 
     @classmethod
     def spent(cls, txid: str):
+        logging.info("Transaction.spent")
         return utils.make_request("getspentinfo", [txid])
