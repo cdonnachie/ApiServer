@@ -1,4 +1,5 @@
 from server import utils
+import json
 
 class Address:
     @classmethod
@@ -31,18 +32,21 @@ class Address:
 
     @classmethod
     def unspent(cls, address: str, amount: int):
-        data = utils.make_request("getaddressutxos", [address, utils.amount(amount)])
+        true = "true"
+        data = utils.make_request("getaddressutxos", [{"addresses": [address],"chainInfo":true}])
 
         if data["error"] is None:
             utxos = []
+            
             for index, utxo in enumerate(data["result"]):
-                utxos.append({
-                    "txid": utxo["txid"],
-                    "index": utxo["outputIndex"],
-                    "script": utxo["script"],
-                    "value": utxo["satoshis"],
-                    "height": utxo["height"]
-                })
+                if  utxo["satoshis"] >= amount :
+                    utxos.append({
+                        "txid": utxo["txid"],
+                        "index": utxo["outputIndex"],
+                        "script": utxo["script"],
+                        "value": utxo["satoshis"],
+                        "height": utxo["height"]
+                    })
 
             data["result"] = utxos
 

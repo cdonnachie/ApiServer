@@ -1,12 +1,10 @@
 from server import cache
-import logging
 import config
 
 class Esplora():
     @classmethod
     @cache.memoize(timeout=config.cache)
     def block(self, result):
-        logging.info("Explora.block")
         return {
             "id": result["hash"],
             "height": result["height"],
@@ -25,7 +23,6 @@ class Esplora():
     @classmethod
     @cache.memoize(timeout=config.cache)
     def transaction(self, result):
-        logging.info("Explora.transaction")
         outputs = []
         inputs = []
 
